@@ -16,7 +16,7 @@ services:
       - db-beacon
     volumes:
       - ./db/CINECA_synthetic_cohort_EUROPE_UK1/bff:/data  
-      - ./db/bff2mongodb_container.sh:/bff2mongodb.sh  
+      - ./db/bff2mongodb_container.sh:/data/bff2mongodb.sh  
     command: bash -c "cp /data/bff2mongodb.sh bff2mongodb.sh && bash bff2mongodb.sh"
     depends_on:
       - db-beacon
