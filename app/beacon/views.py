@@ -15,7 +15,7 @@ from app.utils import get_db_handle, get_collection_handle
 
 # Get environment variables or use default
 DATABASE_NAME = os.getenv('DATABASE_NAME', 'beacon')
-#DATABASE_HOST = os.getenv('DATABASE_HOST', 'mongo')
+#DATABASE_HOST = os.getenv('DATABASE_HOST', 'localhost')
 DATABASE_HOST = os.getenv('DATABASE_HOST', 'mongo')
 DATABASE_PORT = os.getenv('DATABASE_PORT', '27017')
 USERNAME = os.getenv('USERNAME', 'root')
@@ -128,7 +128,24 @@ def variant_response(request):
     #    })
 
     collection_handle = get_collection_handle(db_handle, "genomicVariations")
-    results = list(collection_handle.find({"_position.refseqId": chromosome, "_position.start": start, "variation.referenceBases": reference, "variation.alternateBases": alternate}))
+    #results = list(collection_handle.find({"_position.refseqId": chromosome, "_position.start": start, "variation.referenceBases": reference, "variation.alternateBases": alternate}))
+  
+    ##########################
+    ## DEBUG
+    ##########################  
+
+    #db.collectionname.find({'files':{'$regex':'^File'},})
+    #"HGVSid:22:g.16050319C>T"
+    #general_pattern = "^[A-Za-z0-9]+:[A-Za-z0-9]+:[A-Za-z]+\.[0-9]+[A-Za-z]+>[A-Za-z]+$"
+    #chromossome_pattern="^[A-Za-z0-9]+:"+chromossome+":[A-Za-z]+\.[0-9]+[A-Za-z]+>[A-Za-z]+$"
+
+    #results = list(collection_handle.find({"variation.location.sequence_id":{'$regex':'^[A-Za-z0-9]+:'+chromossome+':[A-Za-z]+\.[0-9]+[A-Za-z]+>[A-Za-z]+$'}, )}    
+    ############################
+
+    print ('^[A-Za-z0-9]+:'+chromosome+':[A-Za-z]+\.[0-9]+[A-Za-z]+>[A-Za-z]+$' )
+
+    results = list(collection_handle.find({"variation.location.sequence_id":{'$regex':'^[A-Za-z0-9]+:'+chromosome+':[A-Za-z]+\.[0-9]+[A-Za-z]+>[A-Za-z]+$'},"variation.location.interval.start.value": start, "variation.referenceBases": reference, "variation.alternateBases": alternate}))
+    print (results)
     count = len(results)
     keys = set([k for result in results for k in result.keys()])
 
@@ -192,7 +209,7 @@ def region_response(request):
 
     # notice chr is not used in the query
     collection_handle = get_collection_handle(db_handle, "genomicVariations")
-    results = list(collection_handle.find({"_position.start": {"$gte": start}, "_position.end": {"$lte":end }}))
+    results = list(collection_handle.find({"variation.location.interval.start.value": {"$gte": start}, "variation.location.interval.end.value": {"$lte":end }}))
     count = len(results)
     keys = set([k for result in results for k in result.keys()])
 
