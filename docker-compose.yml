@@ -9,6 +9,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    command: --wiredTigerCacheSizeGB 4
 
   db-beacon-load:
     image: mongo
